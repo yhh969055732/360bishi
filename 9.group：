@@ -1,0 +1,46 @@
+#include<cstdio>
+#include<string>
+#include<cstring>
+#include<queue>
+const int N = 100;
+using namespace std;
+bool vis[N] = {false};
+int p[N][N];
+struct Node{
+    int id;
+    int step;
+};
+queue<int> son;
+void Node_Count(int root)
+{
+      int cnt(0);int step(1);
+      while(!son.empty()) son.pop;
+      Node R;
+     R.step = 1;R.id = root;
+     vis[root] = true;
+     son.push(R);
+     printf("第%d层的节点个数为%d\n",1,1);
+     while(!son.empty())
+     {
+          Node tmp = son.top();
+         son.pop();
+         if(tmp.step > step) {
+             ++ step;
+              printf("第%d层的节点个数为%d\n",step - 1,cnt);
+             cnt = 0;
+         }
+         for(int i = 0 ; i < N ;++i){
+              if(!vis[i] && p[tmp.id][i]){
+                 ++cnt;
+                 Node Ex;
+                 Ex.id = i;Ex.step = tmp.step + 1;
+                 //Ex.step = step + 1;一样,因为step始终与tmp.step相等
+
+                 son.push(Ex);
+                 vis[Ex.id] = true;
+             }
+         }
+     } //遍历结束
+     printf("printf("第%d层的节点个数为%d\n",step ,cnt);
+}
+    

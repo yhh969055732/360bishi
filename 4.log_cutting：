@@ -1,0 +1,42 @@
+open(FILE,"/data/ebi/meta/log");
+open(CONF,"/data/ebi/conf/urltype.txt");
+open(LOG,">/data/ebi/meta/log_2");
+@array1=();
+while(<CONF>) {
+         chomp;
+         @array2 = split(/,/, $_);
+         if(scalar(@array2)>=6){
+                push @array1,[@array2];
+         } 
+}
+close(CONF);
+ 
+
+while(<FILE>)
+{
+  chomp;
+  my ($suv,$times,$ip,$url,$refer,$type1) = split(/\s+/, $_);
+  $type=$type1;
+  my (undef,undef,$site) = split(/\//, $url);
+  if($urlsitemap{$url}){
+         $site = $urlsitemap{$url}[0]; 
+         $prod = $urlsitemap{$url}[1];
+         $fun = $urlsitemap{$url}[2];
+  }
+  else{
+          for $i (0 .. $#array1){  
+                $regx = @{$array1[$i]}[1];  
+                if($url=~/$regx/){
+         $site=@{$array1[$i]}[2]; 
+         $prod=@{$array1[$i]}[3];
+         $fun = @{$array1[$i]}[4];
+         $urlsitemap{$url}=[$site,$prod,$fun];
+         last;
+                }
+          } 
+  }
+
+print LOG "$site $suv $ip $url $refer,$type\n ";
+}
+close(FILE);
+close(LOG);
